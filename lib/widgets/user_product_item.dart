@@ -16,6 +16,7 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldMessager = ScaffoldMessenger.of(context);
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -34,8 +35,19 @@ class UserProductItem extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             IconButton(
-              onPressed: () {
-                Provider.of<Products>(context, listen: false).deleteProduct(id);
+              onPressed: () async {
+                try {
+                  await Provider.of<Products>(context, listen: false)
+                      .deleteProduct(id);
+                } catch (error) {
+                  scaffoldMessager.showSnackBar(
+                      // Scaffold messager with of context will not work as it is inside the try catch so define the scaffold above
+                      const SnackBar(
+                          content: Text(
+                    'Some Error in deleting',
+                    textAlign: TextAlign.center,
+                  )));
+                }
               },
               icon: const Icon(Icons.delete),
               color: Theme.of(context).errorColor,
